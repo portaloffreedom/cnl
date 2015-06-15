@@ -1,4 +1,4 @@
-#include "..\Global\stdafx.h"
+#include "stdafx.h"
 
 __constant__ int iTestIndices[iMaxNumberOfTrainedElements];
 
@@ -7,32 +7,32 @@ __global__ void executeLayerKernel_OLD(const real_gpu *dp_pLayerInput,const real
 {
 	int iNumInputNeuronsAligned = ALIGN_UP(p_iNumInputNeurons, HALF_WARP);
 	int iNumOutputNeuronsAligned = ALIGN_UP(blockDim.x, HALF_WARP);
-	
+
 	const real_gpu *d_LayerInputThisTest = dp_pLayerInput + blockIdx.x*iNumInputNeuronsAligned;
 	const real_gpu *d_WeightsThisTest = dp_pWeights + threadIdx.x*p_iNumInputNeurons;
 	real_gpu *d_pLayerOutputThisTest = dp_pLayerOutput + blockIdx.x*iNumOutputNeuronsAligned + threadIdx.x;
 	real_gpu *d_pDerivativeOfLastOutputThisTest = dp_pDerivativeOfLastOutput + blockIdx.x*iNumOutputNeuronsAligned + threadIdx.x;
-	
+
 	real_gpu dResult = 0.0f;
-	
+
 	for(int iWeightIndex = 0;iWeightIndex < p_iNumInputNeurons; ++iWeightIndex)
 	{
 		PRINT_DEBUG_INFO("GPU: Test %d , Neuron %d , iWeightIndex %d : d_LayerInputThisTest %f , d_WeightsThisTest %f , MULT %f\n",blockIdx.x,threadIdx.x,iWeightIndex,d_LayerInputThisTest[iWeightIndex],d_WeightsThisTest[iWeightIndex],d_LayerInputThisTest[iWeightIndex] * d_WeightsThisTest[iWeightIndex]);
 		dResult += d_LayerInputThisTest[iWeightIndex] * d_WeightsThisTest[iWeightIndex];
 	}
-	
+
 	real_gpu dDerivativeOfLastOutput = 0.0f;
 
 	PRINT_DEBUG_INFO("GPU: Test %d , Neuron %d : dResult before output function %f\n",blockIdx.x,threadIdx.x,dResult);
 
 	switch(p_eNeuronType)
-	{		
-		case Neuron::NT_LINEAR: 
+	{
+		case Neuron::NT_LINEAR:
 		{
 			dDerivativeOfLastOutput = 1.0f;
 			break;	// Do nothing
 		}
-		case Neuron::NT_SIGMOID: 
+		case Neuron::NT_SIGMOID:
 		{
 			real_gpu dExp = exp(-dResult);
 			dResult = 1.0f / (1.0f + dExp);
@@ -41,17 +41,17 @@ __global__ void executeLayerKernel_OLD(const real_gpu *dp_pLayerInput,const real
 		}
 		case Neuron::NT_TANH:
 		{
-			dResult = tanhf(dResult); 
+			dResult = tanhf(dResult);
 			dDerivativeOfLastOutput = 1 - tanhf(dResult);
 			break;
 		}
 	}
-	
+
 	if(threadIdx.x == blockDim.x - 1)
 		dResult = 1.0f; /* bias */
-		
+
 	*d_pLayerOutputThisTest = dResult;
-	
+
 	// We only need derivative of last output if we are in training!
 	if(dp_pDerivativeOfLastOutput != NULL)
 		*d_pDerivativeOfLastOutputThisTest = dDerivativeOfLastOutput;
@@ -83,7 +83,7 @@ __global__ void executeLayerKernel(const real_gpu *dp_pLayerInput,const real_gpu
 		iTestIndex = 2*blockIdx.x;
 		iTestIndex2 = 2*blockIdx.x+1;
 	}
-	
+
 	const real_gpu *d_LayerInputThisTest = dp_pLayerInput + iTestIndex*p_iNumInputNeuronsAligned;
 	const real_gpu *d_LayerInputThisTest2 = dp_pLayerInput + iTestIndex2*p_iNumInputNeuronsAligned;
 	int iMoveWeightsForThisTest = threadIdx.x*p_iNumInputNeurons;
@@ -109,7 +109,7 @@ __global__ void executeLayerKernel(const real_gpu *dp_pLayerInput,const real_gpu
 
 	real_gpu dResult = 0.0f;
 	real_gpu dResult2 = 0.0f;
-	
+
 	//if(threadIdx.x == 1 && blockIdx.x == 1)
 	//{
 	//	PRINT_DEBUG_INFO("BX %d TX %d | INPUT %d | WEIGHTS %d | OUTPUT %d\n",blockIdx.x,threadIdx.x,d_LayerInputThisTest - dp_pLayerInput,d_WeightsThisTest - dp_pWeights,d_pLayerOutputThisTest - dp_pLayerOutput);
@@ -164,7 +164,7 @@ __global__ void executeLayerKernel(const real_gpu *dp_pLayerInput,const real_gpu
 		//PRINT_DEBUG_INFO("GPU: Test %d , Neuron %d : dResult before output function %f\n",blockIdx.x,threadIdx.x,dResult);
 
 		switch(p_eNeuronType)
-		{		
+		{
 			case Neuron::NT_LINEAR:
 			{
 				dDerivativeOfLastOutput = 1.0f;
@@ -190,7 +190,7 @@ __global__ void executeLayerKernel(const real_gpu *dp_pLayerInput,const real_gpu
 				break;
 			}
 		}
-		
+
 		if(threadIdx.x == p_iOutputNeuronCount)
 		{
 			dResult = 1.0f; // bias
@@ -300,7 +300,7 @@ __global__ void calculateErrorInNotLastLayerKernel(const real_gpu *dp_pNextLayer
 			PRINT_DEBUG_INFO("GPU: Test index %d , Neuron index %d , Weight index %d : dp_pNextLayerWeights [%d] = %f , dp_pNextLayerError[%d] = %f , MULT = %f\n"
 				,blockIdx.x,threadIdx.x,iWeightIndex,iWeightIndex*iNextLayerWeightsForOneNeuron + threadIdx.x,dp_pNextLayerWeights[iWeightIndex*iNextLayerWeightsForOneNeuron + threadIdx.x],iWeightIndex
 				,dp_pNextLayerError[iWeightIndex],dp_pNextLayerWeights[iWeightIndex*iNextLayerWeightsForOneNeuron + threadIdx.x] * dp_pNextLayerError[iWeightIndex]);
-				
+
 			// we load weights twice - in case the first loaded weight position is not divisible by HALF_WARP
 			int iWeightFirstAddress = iWeightIndex*iNextLayerWeightsForOneNeuron;
 			int iFirstAddressToLoad = (iWeightFirstAddress / HALF_WARP) * HALF_WARP;
@@ -315,7 +315,7 @@ __global__ void calculateErrorInNotLastLayerKernel(const real_gpu *dp_pNextLayer
 
 			__syncthreads();
 		}
-		
+
 		if(threadIdx.x < p_iThisLayerNeuronCount)
 		{
 			dp_pThisLayerError[blockDim.x*(2*blockIdx.x) + threadIdx.x] = dError;
@@ -336,7 +336,7 @@ extern "C" void calculateErrorInNotLastLayerCUDA(const real_gpu *dp_pNextLayerWe
 	int iSharedMemorySize = 2 * p_iNextLayerNeuronCount * sizeof(real_gpu); // memory for error
 	iSharedMemorySize += 2 * iElementsAllocatedForOneTestInThisLayerAligned * sizeof(real_gpu); // memory for weights
 
-	calculateErrorInNotLastLayerKernel <<<(p_iNumTestsInBatch+1)/2,iElementsAllocatedForOneTestInThisLayerAligned,iSharedMemorySize>>> 
+	calculateErrorInNotLastLayerKernel <<<(p_iNumTestsInBatch+1)/2,iElementsAllocatedForOneTestInThisLayerAligned,iSharedMemorySize>>>
 		(dp_pNextLayerWeights,dp_pNextLayerError,dp_pThisLayerError,p_iNextLayerNeuronCount,iElementsAllocatedForOneTestInNextLayerAligned,p_iThisLayerNeuronCount,p_iNumTestsInBatch);
 }
 

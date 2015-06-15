@@ -47,7 +47,7 @@ void checkIfGPUTrainingIsOK()
 	// 100 tests, 2 input variables, 1 output variables
 	InputTestSet dummyTestSet(iTestsInTraining,iInputs,iOutputs,vecMinMax,testingFunction,NULL);
 	//dummyTestSet.randomizeTests(NULL);
- 
+
 	logText(Logging::LT_INFORMATION,"Differences before training");
 	dummyNet.executeNetwork(dummyTestSet);
 	dummyTestSet.printVectorDifferenceInfo(InputTestSet::DST_CORRECT_AND_CPU);
@@ -110,7 +110,7 @@ void makeTrainingWithManyPossibilities(const vector<InputTestSet> &p_vecTestSets
 		for(int iEtaIndex=0;iEtaIndex<numElementsInArrayEta;++iEtaIndex)
 		{
 			// Each thread has its own random number generator
-			
+
 			//MTRand generatorInThreadCPUBase(iSeed);
 			//MTRand generatorInThreadGPUBase(iSeed);
 			for(int iTestsInTrainingIndex=0;iTestsInTrainingIndex<numElementsInArrayTestsInTraining;++iTestsInTrainingIndex)
@@ -118,7 +118,7 @@ void makeTrainingWithManyPossibilities(const vector<InputTestSet> &p_vecTestSets
 				for(int iHiddenNeuronsIndex=0;iHiddenNeuronsIndex<numElementsInArrayHiddenNeurons;++iHiddenNeuronsIndex)
 				{
 					for(int iMaxAbsWeightsIndex=0;iMaxAbsWeightsIndex<numElementsInArrayMaxAbsWeights;++iMaxAbsWeightsIndex)
-					{ 
+					{
 						vector<InputTestSet::AttributeLoggingData> vecDifferencesDataCPU;
 
 						vector<InputTestSet::AttributeLoggingData> vecDifferencesDataGPU;
@@ -166,7 +166,7 @@ void makeTrainingWithManyPossibilities(const vector<InputTestSet> &p_vecTestSets
 								trainNet.addNewLayer(iHiddenNeuronsArray[iHiddenNeuronsIndex],Neuron::NT_SIGMOID);
 								trainNet.addNewLayer(iHiddenNeuronsArray[iHiddenNeuronsIndex],Neuron::NT_SIGMOID);
 								trainNet.addNewLayer(trainTestSet.getOutputCount(),Neuron::NT_LINEAR);
-								trainNet.randomizeWeights(dMaxAbsWeightsArray[iMaxAbsWeightsIndex],&generatorInThreadGPU);	
+								trainNet.randomizeWeights(dMaxAbsWeightsArray[iMaxAbsWeightsIndex],&generatorInThreadGPU);
 
 								// We train the network using GPU
 								timer.start();
@@ -226,20 +226,20 @@ void makeTrainingToGenerateStatistics(int p_iTestSetType = -1)
 		{
 			case 2:
 				vecOutputColumns.push_back(12);
-				testSetCSV.loadFromCSVFile("Resources\\Test_data\\forestfires.csv",true,',',vecOutputColumns,vecUnusedColumns);		
+				testSetCSV.loadFromCSVFile("Resources\\Test_data\\forestfires.csv",true,',',vecOutputColumns,vecUnusedColumns);
 				break;
 			case 3:
 				vecOutputColumns.push_back(4);
-				testSetCSV.loadFromCSVFile("Resources\\Test_data\\iris.data",false,',',vecOutputColumns,vecUnusedColumns);		
+				testSetCSV.loadFromCSVFile("Resources\\Test_data\\iris.data",false,',',vecOutputColumns,vecUnusedColumns);
 				break;
 			case 4:
 				vecUnusedColumns.push_back(0);
 				vecOutputColumns.push_back(1);
-				testSetCSV.loadFromCSVFile("Resources\\Test_data\\wdbc.data",false,',',vecOutputColumns,vecUnusedColumns);		
+				testSetCSV.loadFromCSVFile("Resources\\Test_data\\wdbc.data",false,',',vecOutputColumns,vecUnusedColumns);
 				break;
 			case 5:
 				vecOutputColumns.push_back(8);
-				testSetCSV.loadFromCSVFile("Resources\\Test_data\\Concrete_Data.csv",true,';',vecOutputColumns,vecUnusedColumns);		
+				testSetCSV.loadFromCSVFile("Resources\\Test_data\\Concrete_Data.csv",true,';',vecOutputColumns,vecUnusedColumns);
 				break;
 		}
 
@@ -316,7 +316,7 @@ void doExecuteNetworksCPUAndGPUAndSaveLoad()
 
 	// check differences before training network
 	dummyTestSet.printVectorDifferenceInfo(InputTestSet::DST_CORRECT_AND_CPU);
- 
+
 	dummyNet.saveToFile("NetworkStruct.xml");
 	dummyTestSet.saveToFile("TestSet.xml");
 
@@ -331,44 +331,44 @@ void doExecuteNetworksCPUAndGPUAndSaveLoad()
 
 void checkIfCSVReadingIsOK()
 {
-	InputTestSet testSetCSV;		// Nowy zestaw testów
-	vector<int> vecOutputColumns;	// Tworzenie listy numerów kolumn wyjœciowych (wynikowych)
-	vecOutputColumns.push_back(5);	// Jedyna wyjœciowa kolumna - indeks 5
-	vector<int> vecUnusedColumns;	// Lista numerów kolumn nieu¿ywanych - pusta
-	testSetCSV.loadFromCSVFile		// £adowanie listy testów
-		("Resources\\Test_data\\forestfires2.csv"	// Plik wejœciowy z testami w formacjie CSV
+	InputTestSet testSetCSV;		// Nowy zestaw testï¿½w
+	vector<int> vecOutputColumns;	// Tworzenie listy numerï¿½w kolumn wyjï¿½ciowych (wynikowych)
+	vecOutputColumns.push_back(5);	// Jedyna wyjï¿½ciowa kolumna - indeks 5
+	vector<int> vecUnusedColumns;	// Lista numerï¿½w kolumn nieuï¿½ywanych - pusta
+	testSetCSV.loadFromCSVFile		// ï¿½adowanie listy testï¿½w
+		("Resources\\Test_data\\forestfires2.csv"	// Plik wejï¿½ciowy z testami w formacjie CSV
 		,true						// Pierwszy wiersz zawiera nazwy kolumn
-		,','						// Okreœlenie znaku oddzielaj¹cego elementy - przecinek
-		,vecOutputColumns			// Podanie listy kolumn wyjœciowych
-		,vecUnusedColumns);			// Podanie listy kolumn nieu¿ywanych
+		,','						// Okreï¿½lenie znaku oddzielajï¿½cego elementy - przecinek
+		,vecOutputColumns			// Podanie listy kolumn wyjï¿½ciowych
+		,vecUnusedColumns);			// Podanie listy kolumn nieuï¿½ywanych
 
-	MLP dummyNet;								// Nowa sieæ MLP
-	dummyNet.setInputNeuronCount				// Ustawienie iloœci neuronów wejœciowych
+	MLP dummyNet;								// Nowa sieï¿½ MLP
+	dummyNet.setInputNeuronCount				// Ustawienie iloï¿½ci neuronï¿½w wejï¿½ciowych
 		(testSetCSV.getInputCount());
 	dummyNet.addNewLayer						// Dodawanie warstwie ukrytej
-		(3										// Iloœæ neuronów
+		(3										// Iloï¿½ï¿½ neuronï¿½w
 		,Neuron::NT_SIGMOID);					// Funkcja aktywancji w warstwie ukrytej
-	dummyNet.addNewLayer						// Ustawienie iloœci neuronów wyjœciowych ...
-		(testSetCSV.getOutputCount()			// ... - tyle ile wyjœæ w zestawie testów
-		,Neuron::NT_LINEAR);					// Wyjœcie sieci - linearne
-	dummyNet.randomizeWeights(0.01,NULL);		// dobranie losowych wartoœci wag
+	dummyNet.addNewLayer						// Ustawienie iloï¿½ci neuronï¿½w wyjï¿½ciowych ...
+		(testSetCSV.getOutputCount()			// ... - tyle ile wyjï¿½ï¿½ w zestawie testï¿½w
+		,Neuron::NT_LINEAR);					// Wyjï¿½cie sieci - linearne
+	dummyNet.randomizeWeights(0.01,NULL);		// dobranie losowych wartoï¿½ci wag
 	dummyNet.trainNetwork						// Uczenie sieci przez CPU
-		(testSetCSV								// Uczenie wczeœniej za³adowanym zestawem testów
-		,6000									// Iloœæ sekwencji uczenia sieci
+		(testSetCSV								// Uczenie wczeï¿½niej zaï¿½adowanym zestawem testï¿½w
+		,6000									// Iloï¿½ï¿½ sekwencji uczenia sieci
 		,0.01									// eta - czynnik uczenia
-		,1										// Iloœæ testów uczona na raz
+		,1										// Iloï¿½ï¿½ testï¿½w uczona na raz
 		,NULL);									// Generator liczb pseudolosowych - niepotrzebny
 
 	dummyNet.executeNetwork(testSetCSV);		// Uruchomienie sieci na wszystkich testach przez CPU
 	dummyNet.executeNetworkGPU(testSetCSV);		// Uruchomienie sieci na wszystkich testach przez GPU
 
 
-	testSetCSV.saveToFile("TestSetFromCSV.xml");// Zapisywanie zestawu testów jako XML
+	testSetCSV.saveToFile("TestSetFromCSV.xml");// Zapisywanie zestawu testï¿½w jako XML
 	dummyNet.saveToFile("NetworkStruct.xml");	// Zapisywanie sieci MLP jako XML
 	testSetCSV.loadFromFile("TestSetFromCSV.xml");
 	testSetCSV.saveToFile("TestSetFromCSV2.xml");
 }
- 
+
 int main()
 {
 	// We set, which logging types are allowed
@@ -384,7 +384,7 @@ int main()
 
 	doExecuteNetworksCPUAndGPUAndSaveLoad();
 
-	//makeTrainingToGenerateStatistics(); //makeAllTrainingsToToGenerateStatistics();
+	makeTrainingToGenerateStatistics(); makeAllTrainingsToToGenerateStatistics();
 
 	//checkIfGPUTrainingIsOK();
 

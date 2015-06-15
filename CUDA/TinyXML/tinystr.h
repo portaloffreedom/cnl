@@ -41,6 +41,7 @@ distribution.
 
 #include <assert.h>
 #include <string.h>
+#include <stdio.h>
 
 /*	The support for explicit isn't that universal, and it isn't really
 	required - it is used to check that the TiXmlString class isn't incorrectly
@@ -329,7 +330,7 @@ class TiXmlString
 			// to the normal allocation, although use an 'int' for systems
 			// that are overly picky about structure alignment.
 			const size_type bytesNeeded = sizeof(Rep) + cap;
-			const size_type intsNeeded = ( bytesNeeded + sizeof(int) - 1 ) / sizeof( int ); 
+			const size_type intsNeeded = ( bytesNeeded + sizeof(int) - 1 ) / sizeof( int );
 			rep_ = reinterpret_cast<Rep*>( new int[ intsNeeded ] );
 
 			rep_->str[ rep_->size = sz ] = '\0';

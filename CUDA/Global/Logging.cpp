@@ -25,7 +25,7 @@ void Logging::makeSureLoggingFileExists()
 void Logging::logTextFileLine(LoggingType p_eLoggingType, const char *p_sLoggingText,const char *p_sFileName,const char *p_sFunctionName,long p_lLineNumber)
 {
 	// we check if this logging type is logged either by file or console
-	if(!((g_uiAllowedTypesConsole & (unsigned int)p_eLoggingType) 
+	if(!((g_uiAllowedTypesConsole & (unsigned int)p_eLoggingType)
 		|| (g_uiAllowedTypesFile & (unsigned int)p_eLoggingType)))
 		return;
 
@@ -62,11 +62,12 @@ void Logging::logTextFileLine(LoggingType p_eLoggingType, const char *p_sLogging
 	timeval now1;
 	gettimeofday(&now1, NULL);
 	time_t now = now1.tv_sec;
-	localtime(&now);
+	struct tm * timeinfo;
+	timeinfo = localtime(&now);
 
 	sLogging.format("%d.%02d.%02d %02d:%02d:%02d:%03d    %s%25s%50s%5d    %s\n",
-		now.tm_year+1900,now.tm_mon+1,now.tm_mday,
-		now.tm_hour,now.tm_min,now.tm_sec,now1.tv_usec,
+		timeinfo->tm_year+1900,timeinfo->tm_mon+1,timeinfo->tm_mday,
+		timeinfo->tm_hour,timeinfo->tm_min,timeinfo->tm_sec,now1.tv_usec,
 		sLoggingType.c_str(),sFileName.c_str(),p_sFunctionName,
 		p_lLineNumber,p_sLoggingText);
 #endif

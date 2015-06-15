@@ -70,7 +70,7 @@ Str NeuralNetwork::getNeuralNetworkTypeString() const
 	if(m_eNetworkType == NNT_MLP)
 		return Str("MLP");
 	else
-		throw exception("Invalid NN type");
+		throw "Invalid NN type";
 }
 
 NeuralNetwork *NeuralNetwork::getNetworkFromNetworkType(Str p_sNetworkType)
@@ -78,5 +78,5 @@ NeuralNetwork *NeuralNetwork::getNetworkFromNetworkType(Str p_sNetworkType)
 	if(p_sNetworkType == "MLP")
 		return new MLP;
 	else
-		throw exception("Invalid NN type string");
+		throw "Invalid NN type string";
 }

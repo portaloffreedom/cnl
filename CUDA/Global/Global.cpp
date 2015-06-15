@@ -38,7 +38,7 @@ Str getDoubleVectorXMLString(const vector<double>&p_vecToConvert,vector< pair<do
 		++sPointer;
 	}
 	*sPointer = 0;
-	
+
 	Str sToReturn(sBuffer);
 	delete []sBuffer;
 	return sToReturn;
@@ -58,12 +58,15 @@ void setDoubleVectorXMLString(vector<double>&p_vecToConvert, const Str &p_sConne
 	//char *sDuplicate = strdup(p_sConnectedValues.c_str());
 	const char *sPointer = p_sConnectedValues.c_str(); //sDuplicate;
 
-	while(((int)sPointer != 1) && (*sPointer != 0))
+	while(*sPointer != 0)
 	{
 		double dNewValue;
 		sscanf(sPointer,"%lf",&dNewValue);
 		p_vecToConvert.push_back(dNewValue);
-		sPointer = strchr(sPointer,cDivider)+1;
+		sPointer = strchr(sPointer,cDivider);
+		if (sPointer == 0)
+			break;
+		sPointer = sPointer+1;
 	}
 }
 

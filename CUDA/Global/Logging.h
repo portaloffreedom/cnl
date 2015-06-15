@@ -5,19 +5,19 @@
 		|| (g_uiAllowedTypesFile & (unsigned int)a) )													\
 	{																									\
 		Logging::logTextFileLine(a,b,__FILE__,__FUNCTION__,__LINE__);									\
-	}																									
+	}
 
 
 #define logTextParams(a,b,...)																			\
 	if( (g_uiAllowedTypesConsole & (unsigned int)a)														\
 		|| (g_uiAllowedTypesFile & (unsigned int)a) )													\
 	{																									\
-		Logging::logTextFileLine(a,TiXmlString(b,__VA_ARGS__).c_str(),__FILE__,__FUNCTION__,__LINE__);	\
+		Logging::logTextFileLine(a,""/*TiXmlString(b,__VA_ARGS__).c_str()*/,__FILE__,__FUNCTION__,__LINE__);	\
 	}
-		
+
 
 #define logAssert(a)																					\
-	if((int)(a) == 0)																					\
+	if(a == 0)																					\
 	{																									\
 		logText(Logging::LT_ERROR,Str("Assert failed (exiting): "+Str(#a)).c_str());					\
 		exit(1);																						\
@@ -73,7 +73,7 @@ public:
 		#else
 			do
 			{
-				clock_gettime(CLOCK_REALTIME, &stop);
+				clock_gettime(CLOCK_REALTIME, &m_Stop);
 			}
 			while (m_Stop.tv_nsec < 0 || m_Stop.tv_nsec >= 1000000000L);
 
